@@ -26,7 +26,10 @@ test_sentences = [
     "the dog eats",
     "the fox eats",
     "the bird eats",
+    "the fox likes",
 ]
+
+hidden_states = {}
 
 print("\nREPRESENTATION PROBE")
 
@@ -38,6 +41,7 @@ with torch.no_grad():
         logits, attention = model(x)
 
         hidden = model.last_hidden[0, -1]
+        hidden_states[sentence] = hidden
 
         print(f"\n{sentence}")
         print("Hidden vector:")
@@ -52,3 +56,39 @@ with torch.no_grad():
                 f"  {itos[token_id.item()]:<10} "
                 f"{probability.item() * 100:6.2f}%"
             )
+
+
+# -----------------------------
+# Compare representations
+# -----------------------------
+#
+# Euclidean distance measures the absolute distance between
+# two hidden vectors.
+#
+# Cosine similarity measures how closely their directions
+# align, independent of their overall magnitude.
+#
+
+pairs = [
+    ("the dog eats", "the fox eats"),
+    ("the cat eats", "the dog eats"),
+    ("the fox eats", "the fox likes"),
+    ("the cat eats", "the bird eats"),
+]
+
+print("\nREPRESENTATION DISTANCES")
+
+for first, second in pairs:
+    a = hidden_states[first]
+    b = hidden_states[second]
+
+    euclidean = torch.linalg.vector_norm(a - b)
+    cosine = torch.nn.functional.cosine_similarity(
+        a.unsqueeze(0),
+        b.unsqueeze(0),
+        dim=1,
+    ).item()
+
+    print(f"\n{first}  <->  {second}")
+    print(f"Euclidean distance: {euclidean.item():.4f}")
+    print(f"Cosine similarity:  {cosine:.4f}")
