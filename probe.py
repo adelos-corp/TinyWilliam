@@ -1,19 +1,6 @@
 import torch
 
-from model import TinyWilliam
-from tokenizer import encode, itos, stoi
-
-
-# -----------------------------
-# Model configuration
-# -----------------------------
-
-model = TinyWilliam(
-    vocab_size=len(stoi),
-    context_length=32,
-    d_model=24,
-    d_ff=128
-)
+from tokenizer import encode, itos
 
 
 # -----------------------------
