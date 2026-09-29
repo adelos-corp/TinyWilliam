@@ -27,6 +27,7 @@ test_sentences = [
     "the fox eats",
     "the bird eats",
     "the fox likes",
+    "the dog likes",
 ]
 
 hidden_states = {}
@@ -62,17 +63,23 @@ with torch.no_grad():
 # Compare representations
 # -----------------------------
 #
-# Euclidean distance measures the absolute distance between
-# two hidden vectors.
+# We compare contexts that differ in one important way:
 #
-# Cosine similarity measures how closely their directions
-# align, independent of their overall magnitude.
+# 1. Same verb, different animals.
+# 2. Same animal, different verbs.
+# 3. Different animals that lead to the same target.
+# 4. Different animals that lead to different targets.
+#
+# Euclidean distance measures absolute separation.
+# Cosine similarity measures directional alignment.
 #
 
 pairs = [
     ("the dog eats", "the fox eats"),
-    ("the cat eats", "the dog eats"),
+    ("the dog likes", "the fox likes"),
+    ("the dog eats", "the dog likes"),
     ("the fox eats", "the fox likes"),
+    ("the cat eats", "the dog eats"),
     ("the cat eats", "the bird eats"),
 ]
 
@@ -92,3 +99,26 @@ for first, second in pairs:
     print(f"\n{first}  <->  {second}")
     print(f"Euclidean distance: {euclidean.item():.4f}")
     print(f"Cosine similarity:  {cosine:.4f}")
+
+
+# -----------------------------
+# Representation interpretation
+# -----------------------------
+#
+# This does not assign a "meaning" to individual dimensions.
+# Instead, it gives us controlled geometric comparisons.
+#
+# In particular, the most informative comparisons are:
+#
+# dog eats  <-> fox eats
+# dog likes <-> fox likes
+#
+# Both pairs share the same predicted object respectively:
+#
+# meat  and  bones
+#
+# while:
+#
+# dog eats <-> dog likes
+#
+# keeps the animal fixed but changes the verb and target.
