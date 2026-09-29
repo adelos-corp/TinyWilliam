@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 from dataset import inputs, targets
-from tokenizer import stoi
+from tokenizer import stoi, encode, itos
 from model import TinyWilliam
 
 vocab_size = len(stoi)
@@ -75,31 +75,6 @@ for i in range(len(inputs)):
             probs[i, 3, token_id].item()
         )
 
-# Representation probing
-
-model.eval()
-
-test_sentences = [
-    "the cat eats",
-    "the dog eats",
-    "the fox eats",
-    "the bird eats",
-]
-
-with torch.no_grad():
-    for sentence in test_sentences:
-        tokens = encode(sentence)[:-1]
-        x = torch.tensor([tokens])
-
-        logits, attention = model(x)
-
-        # Hidden representation at the final position
-        hidden = model.last_hidden[:, -1, :]
-
-        print(sentence)
-        print(hidden)
-        print()
-
 # -----------------------------
 # Final predictions
 # -----------------------------
@@ -126,7 +101,6 @@ print(targets)
 
 # TEST: An unseen sentence
 
-from tokenizer import encode, itos
 
 test_sentence = "the fox eats"
 
