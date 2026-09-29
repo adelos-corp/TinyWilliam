@@ -172,7 +172,14 @@ class TinyWilliam(torch.nn.Module):
         )
 
         # ------------------------------------------------
-        # 6. Output logits
+        # 6. Save final hidden representation
+        # ------------------------------------------------
+
+        # Exposed for experiments and representation probing.
+        self.last_hidden = X
+
+        # ------------------------------------------------
+        # 7. Output logits
         # ------------------------------------------------
 
         logits = X @ self.W_out
