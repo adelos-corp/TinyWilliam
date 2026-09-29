@@ -6,7 +6,7 @@ The project started as a learning path from individual neurons and manual backpr
 
 ## Current model
 
-- Vocabulary: 16 tokens
+- Vocabulary: 17 tokens
 - Context length: 32
 - Model dimension: 24
 - Feed-forward dimension: 128
